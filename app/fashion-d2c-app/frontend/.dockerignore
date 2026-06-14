@@ -1,0 +1,48 @@
+# Dependencies
+node_modules
+
+# Build outputs
+.next
+out
+build
+dist
+
+# Development files
+.git
+.gitignore
+README.md
+.env
+.env*.local
+.env.development
+.env.test
+AGENTS.md
+CLAUDE.md
+
+# Logs
+*.log
+npm-debug.log*
+bun-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode
+.idea
+*.swp
+*.swo
+
+# Temporary files
+*.tmp
+.cache
+
+# TypeScript config (not needed in image)
+tsconfig.json
+next-env.d.ts
+eslint.config.mjs
+postcss.config.mjs
+
+# Docker related (don't copy itself)
+Dockerfile
+.dockerignore
