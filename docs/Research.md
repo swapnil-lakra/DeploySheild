@@ -1,3 +1,5 @@
+Date - 10/06/2026
+
 # 1. Git Pull Command – Why is it used?
 The git pull command is used to fetch the latest changes from the remote repository and bring them into your local repository.
 
@@ -554,6 +556,8 @@ If you rely on traditional deployment methodologies (such as running a simple `g
 ---
 ---
 
+Date - 11/06/2026
+
 # 8. ✅ What Are Containers? (Very Simple Explanation)
 
 A **container** is a lightweight, portable **package** that contains your entire application (code + dependencies + configuration).
@@ -1069,6 +1073,8 @@ This is a common CI/CD pipeline architecture used by many modern organizations f
 ---
 ---
 
+Date - 12/06/2026
+
 # 11. Which is better - sepearte docker file or single file for frontend and backend ?
 
 ## The Best Practice: Create **Two Separate Dockerfiles**
@@ -1237,3 +1243,315 @@ Build and push the frontend and backend images separately. Both images can be st
 * Docker Hub
 
 This gives you independent deployments, better scalability, smaller images, faster builds, and a production architecture that aligns with modern industry standards.
+---
+---
+Date - 14/06/2026
+
+# 12. What is docker-compose and why it is user and what will happen if it is not  used ? 
+
+## What Is Docker Compose?
+
+**Docker Compose** is a tool used to **run, manage, and connect multiple Docker containers together**.
+
+In other words, when your application consists of multiple components such as a **Frontend + Backend + Database**, each component runs in its own container. Docker Compose allows you to define and manage all of them in a single file called `docker-compose.yml`.
+
+---
+
+## How Docker Compose Fits Into Application
+
+Application consists of:
+
+* **Next.js** (Frontend)
+* **FastAPI** (Backend)
+* **Database** (PostgreSQL/MySQL)
+
+Docker Compose helps by:
+
+* Starting all services with a **single command**
+* Automatically creating networking between services
+* Managing environment variables
+* Managing volumes (for persistent data and live code updates)
+* Mapping ports
+* Handling dependencies (for example, ensuring the backend starts after the database)
+
+---
+
+## Example: `docker-compose.yml` for Your Project
+
+```yaml
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    container_name: fastapi-backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - db
+
+  frontend:
+    build: ./frontend
+    container_name: nextjs-frontend
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    volumes:
+      - ./frontend:/app
+    depends_on:
+      - backend
+
+  db:                     # PostgreSQL Database
+    image: postgres:15
+    container_name: postgres-db
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+volumes:
+  postgres-data:
+```
+
+---
+
+## Benefits of Docker Compose (Frontend + Backend + Database)
+
+| Benefit                           | Explanation                                           |
+| --------------------------------- | ----------------------------------------------------- |
+| Start everything with one command | `docker compose up -d`                                |
+| Automatic networking              | Backend can connect to the database using `db:5432`   |
+| Easy local development            | Live reload and easier development workflow           |
+| Consistent environment            | Every team member gets the same setup                 |
+| Easy start/stop/restart           | `docker compose up` and `docker compose down`         |
+| Health checks & dependencies      | Backend can wait for the database to become available |
+
+---
+
+## What Happens If You Don't Use Docker Compose?
+
+Without Docker Compose, you would have to manage each container manually.
+
+Some common problems include:
+
+* Running multiple `docker run` commands manually
+* Configuring networking between containers yourself
+* Managing database volumes separately
+* Setting environment variables for each container individually
+* Environment inconsistencies across team members
+* Slower and more error-prone development
+* Increased complexity in production environments with multiple services
+
+### In Simple Words
+
+Without Docker Compose, you are manually managing **three separate containers**, which quickly becomes difficult and messy as the project grows.
+
+---
+
+## Summary
+
+* **Docker Compose** is the **orchestra conductor** for multiple containers.
+* In your case (**Frontend + Backend + Database**), it is extremely useful, especially during development.
+* Many teams also use Docker Compose in production when deploying applications on simple VPS or EC2 servers.
+* It simplifies container management, networking, environment configuration, and service orchestration.
+
+### Typical Workflow
+
+```text
+Frontend (Next.js)
+        │
+        ▼
+Backend (FastAPI)
+        │
+        ▼
+Database (PostgreSQL)
+
+      Docker Compose
+            │
+            ▼
+docker compose up -d
+```
+
+With a single command, your entire application stack is up and running.
+
+---
+---
+
+Date - 15/06/2026
+
+# How to push docker images to GHCR ?
+
+To store and distribute Docker images using GitHub, you use the **GitHub Container Registry (GHCR)**, which is GitHub's official container registry.
+
+---
+
+## Complete Step-by-Step Process
+
+### Step 1: Prepare Your GitHub Repository
+
+1. Create a new GitHub repository (public or private).
+2. Clone the repository to your local machine:
+
+```bash
+git clone https://github.com/yourusername/your-repo-name.git
+cd your-repo-name
+```
+
+3. Copy your frontend and backend folders into the repository.
+
+---
+
+## Step 2: Push Docker Images to GitHub Container Registry (GHCR)
+
+### A. Push the Frontend Image
+
+```bash
+# 1. Navigate to the frontend folder
+cd frontend
+
+# 2. Build the Docker image
+docker build -t ghcr.io/yourusername/your-repo-name/frontend:latest .
+
+# 3. Log in to GitHub Container Registry (first time only)
+docker login ghcr.io -u yourusername
+
+# Enter your GitHub Personal Access Token when prompted
+```
+
+### How to Create a Personal Access Token (PAT)
+
+1. Go to GitHub → Settings
+2. Open Developer Settings
+3. Select Personal Access Tokens → Tokens (classic)
+4. Create a new token with the following scope:
+
+```text
+write:packages
+```
+
+---
+
+### B. Push the Backend Image
+
+```bash
+# 1. Navigate to the backend folder
+cd ../backend
+
+# 2. Build the Docker image
+docker build -t ghcr.io/yourusername/your-repo-name/backend:latest .
+
+# 3. Push the image
+docker push ghcr.io/yourusername/your-repo-name/backend:latest
+```
+
+---
+
+## Complete Commands (Quick Version)
+
+```bash
+# Push Frontend Image
+cd frontend
+docker build -t ghcr.io/yourusername/myapp-frontend:latest .
+docker push ghcr.io/yourusername/myapp-frontend:latest
+
+# Push Backend Image
+cd ../backend
+docker build -t ghcr.io/yourusername/myapp-backend:latest .
+docker push ghcr.io/yourusername/myapp-backend:latest
+```
+
+---
+
+## Important Tips
+
+### 1. Use Proper Image Names
+
+Recommended format:
+
+```text
+ghcr.io/yourusername/repository-name/image-name:tag
+```
+
+Example:
+
+```text
+ghcr.io/johndoe/ecommerce/frontend:v1.0.0
+```
+
+---
+
+### 2. Follow Tagging Best Practices
+
+For development:
+
+```text
+latest
+```
+
+For production:
+
+```text
+v1.0.0
+```
+
+or
+
+```text
+git-commit-sha
+```
+
+Using version numbers or commit SHAs makes rollbacks and deployments much easier.
+
+---
+
+### 3. Create a `.dockerignore` File
+
+Create a `.dockerignore` file in both the frontend and backend directories.
+
+This prevents unnecessary files from being copied into the image, resulting in:
+
+* Faster builds
+* Smaller images
+* Better security
+
+Typical examples:
+
+```text id="2x6j67"
+node_modules
+.git
+.env
+dist
+.next
+__pycache__
+```
+
+---
+
+## Bonus: Automate Image Builds and Pushes with GitHub Actions
+
+A common production workflow is:
+
+```text id="0ex2ig"
+git push
+    │
+    ▼
+GitHub Actions
+    │
+    ├── Build Frontend Image
+    ├── Build Backend Image
+    └── Push Both Images to GHCR
+```
+
+This eliminates the need to manually run `docker build` and `docker push` commands.
+
+Whenever you push code to GitHub, the images are automatically built and uploaded to GHCR.
+
+This is the recommended approach for CI/CD pipelines.

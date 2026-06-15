@@ -1,3 +1,4 @@
+Date - 10/06/2026
 1. Mujhe poore acche se detail me samajhna hoga uss business problem ko.
 
 2. Business problem ko acche se samajhne ke liye mujhe aise keywords ke baare me research karna padega jo mujhe bata nahi hai ?
@@ -37,6 +38,8 @@
 19. Ab Mujhe Samajh Aa gaya ki mujhe sabse phele solution ka architecture create karna hai
 
 20. Toh mujhe architecture diagram ke samajh aa raha hai ki ek central repository hoga jisme developer code push karega.
+
+Date - 11/06/2026
 
 21. Toh mujhe sabse phele decide karna padega ki ye central code repository konsa hoga.
 
@@ -96,3 +99,48 @@ Date - 14/06/2026
 
 47. Application ke frontend and backend ke liye main Docker images create kiya hai aur usko implementations.md me point no. 1 and 2 me document kiya hu 
 
+48. Kyuki d2c fashion application me frontend + backend + database hai toh mujhe inke images ko docker-compose se manage karna padega.
+
+49. Lekin docker-compose se phele mujhe samajhna padega ki ye hota kya aur iska use kya hai aur hum isko use na kare toh fir kya hoga ?
+
+50. Ab mujhe acche se pata chal gaya, docker-composer kyu use hota hai aur use nahi kiya jaaye toh kya hoga aur mai isko research karke Research.md me point no. 12 me document kiya hua hai.
+
+51. Mai docker-compose.yaml file create kar liya hai ab mujhe `docker compose up -d` command use karke multiple containers ko orchestration implement karna hai
+
+Date - 15/06/2026
+
+52. maine `docker compose up -d` command run karke multiple containers ko orchestration implement karke Implementation.md me point no. 4 me document kiya hu
+
+53. mera d2c fashion application consists of frontend(nextjs) + backend(fastapi) + database(mysql), toh mujhe nahi lagta ki inke images ec2 me container ban ke run ho paayenge and most likely ec2 OoM(Out of Memory) ho jaayega kyuki mai aws ke free tier me hu aur mai ec2 type t3.micro use kar raha hun jisme only 1gb memory hoti hai
+
+54. Fir bhi mai ek baar try karke dekhunga bhale hi fail kyu na ho jaaye
+
+55. lekin usse phele mujhe frontend(nextjs) + backend(fastapi) ke docker images ko ek central image registry me push karna padega 
+
+56. Maine phele decide kiya tha ECR me docker images ko push karunga but uski free tier ki limit 500mb ki hai aur application ke docker images ki size 500mb ko bhi exceed kar rahi hai toh mujhe inhe kisi doosre image registory me push karna padega jiski free limit 500mb ko exceed karti ho.
+
+57. Maine GHCR(GitHub Container Registry) ko choose kiya kyuki ye public images ke liye 100% free unlimited storage provide karta hai aur private images ke liye only 500mb , toh ye mere liye kaafi hai
+
+58. Maine GHCR(GitHub Container Registry) ko choose kar liya hai aur iske trade-offs aur consequences ko maine ARD.md me point no. 5 me document kiya hai
+
+59. Ab mujhe sabse phele research karna padega ki docker images ko kaise GHCR(GitHub Container Registry) me push karte hai 
+
+60. maine GHCR(GitHub Container Registry) me kaise push karte hai uska research karke Research.md me point no. 12 me document kiya hun.
+
+61. mai apna PAT(Personal Access Token) successfully generate kar liya hai
+
+62. ab mai frontend(nextjs) aur backend(fastapi) ke docker images ko HCR(GitHub Container Registry) me push karne jaa raha hun
+
+63. frontend(nextjs) aur backend(fastapi) ke docker images ko GHCR(GitHub Container Registry) me successfully push ho gaya hai aur usko Implementation.md me point no. 5 me document kiya gaya hai
+
+64. ab mujhe pata karna padega ki mai docker-compose.yaml me wo images ka name likhu jo GHCR(itHub Container Registry) me push kiya hu toh kya wo uss image ko automatically pull karke container run karega ya nahi.
+
+65. agar docker images public image registry me hai toh bina kisi login ke automatically pull karlega lekin agar wo docker image private image registry me hai toh fir remote server me login karke PAT(Personal Access Token) dena hoga fir wo automatically pull kar lega
+
+66. mai GHCR(GitHub Container Registry) ke images ki visibiliy ko private se change karke public kar diya hun
+
+67. ab mai apne ec2 me d2c fashion application ka code ko github se clone karke usme `docker-compose.yaml` file se `docker compose up -d` command run karunga
+
+68. mai d2c fashion application ke docker image se container run kiya aur wo successfully run ho gaya ✅
+
+69. 
