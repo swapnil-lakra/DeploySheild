@@ -35,8 +35,8 @@ services:
   
   # FastAPI Backend
   backend:
-    image: fastapi-backend:latest
-    container_name: d2c-backend
+    image: ghcr.io/swapnil-lakra/deploysheild/fastapi-backend:latest
+    container_name: d2c-backend 
     restart: unless-stopped
     environment:
       DATABASE_URL: mysql+aiomysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql:3306/d2c_fashion?charset=utf8mb4
@@ -50,7 +50,7 @@ services:
   
   # Next.js Frontend
   frontend:
-    image: nextjs-frontend:latest
+    image: ghcr.io/swapnil-lakra/deploysheild/nextjs-frontend:latest
     container_name: d2c-frontend
     restart: unless-stopped
     environment:
