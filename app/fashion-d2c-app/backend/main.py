@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from routers import products   # because routers folder is in same directory as main.py
 from database import engine, Base
 import asyncio
+
 from datetime import datetime
 
 async def init_db():
