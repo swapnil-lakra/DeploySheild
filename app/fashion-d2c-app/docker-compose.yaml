@@ -35,7 +35,7 @@ services:
   
   # FastAPI Backend
   backend:
-    image: ghcr.io/swapnil-lakra/deploysheild/fastapi-backend:latest
+    image: ghcr.io/swapnil-lakra/deploy-sheild/fastapi-backend:latest
     container_name: d2c-backend 
     restart: unless-stopped
     environment:
