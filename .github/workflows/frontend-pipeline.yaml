@@ -61,7 +61,7 @@ jobs:
             echo "🚀 Starting Deployment on EC2..."
             cd /home/ubuntu/DeploySheild/app/fashion-d2c-app/
 
-            # pull both latest images
+            # pull latest images
             docker pull $GHCR_REGISTRY/${{ env.FRONTEND_IMAGE }}:latest
 
             # Stop old containers and start new ones
