@@ -310,4 +310,57 @@ test: ["CMD", "mariadb-admin", "ping", "-h", "127.0.0.1", "--silent"]
         └──────────────────────────────────┘
 ```
 
-Date - 16/06/2026
+---
+---
+
+Date - 19/06/2026
+
+# 8. CI/CD Pipeline broken becaue docker image build failed
+
+## Error
+### Backend docker image build error
+ERROR: failed to build: invalid tag "ghcr.io/swapnil-lakra//fastapi-backend:latest": invalid reference format
+
+### Frontend docker image build error
+ERROR: failed to build: invalid tag "ghcr.io/swapnil-lakra//nextjs-frontend:latest": invalid reference format
+
+## Root Cause
+- Iss pipeline break hone ka main reason hai invalid tag docker image ko assign karna
+
+- "ghcr.io/swapnil-lakra//nextjs-frontend:latest" ❌
+
+- "ghcr.io/swapnil-lakra//fastapi-backend:latest" ❌
+
+Aur invalid tag hone ka main reason hai - invalid github context
+```yaml
+# frontend tag ❌
+env:
+  GHCR_REGISTRY: ghcr.io/${{ github.repository_owner }}
+  FRONTEND_IMAGE: ${{ github.respository_name }}/nextjs-frontend ❌
+
+# backend tag ❌
+env:
+  GHCR_REGISTRY: ghcr.io/${{ github.repository_owner }}
+  BACKEND_IMAGE: ${{ github.repository_name }}/fastapi-backend ❌
+```
+
+`github.repsitory_name` invalid hai kyuki yeh exist hi nahi karta hai
+
+## Error Resolving
+
+Iss broken ci/cd pipeline ko repair karne ke liye valid github context provide karna padega jisse ki valid tag assign ho docker image ko
+
+```yaml
+
+# frontend tag
+env:
+  GHCR_REGISTRY: ghcr.io/${{ github.repository_owner }}
+  FRONTEND_IMAGE: ${{ github.respository_name }}/nextjs-frontend ❌
+  FRONTEND_IMAGE: ${{ github.event.repository.name }}/nextjs-frontend ✅
+
+# backend tag
+env:
+  GHCR_REGISTRY: ghcr.io/${{ github.repository_owner }}
+  BACKEND_IMAGE: ${{ github.repository_name }}/fastapi-backend ❌
+  BACKEND_IMAGE: ${{ github.event.repository.name }}/fastapi-backend ✅
+```
