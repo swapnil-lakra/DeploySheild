@@ -64,10 +64,38 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             echo "🚀 Starting Deployment on EC2..."
-            git clone https://github.com/swapnil-lakra/deploy-sheild.git
-            cd /home/ubuntu/deploy-sheild/app/fashion-d2c-app/
             
-            cat << 'EOF' | sudo tee /home/ubuntu/deploy-sheild/app/fashion-d2c-app/.env
+            TARGET_DIR="/home/ubuntu/deploy-sheild"
+            REPO_URL="https://github.com/swapnil-lakra/deploy-sheild.git"
+
+            echo "Checking if repository directory exists..."
+
+            # Check agar directory exist karti hai (-d flag se)
+            if [ -d "$TARGET_DIR" ]; then
+              echo "⚠️ Old directory found at $TARGET_DIR. Deleting it..."
+              # Purani directory ko remove karna
+              sudo rm -rf "$TARGET_DIR"
+              echo "✅ Old directory deleted successfully."
+            else
+              echo "✨ No existing directory found. Proceeding with clean clone."
+            fi
+
+            # /home/ubuntu directory me switch karein jahan clone karna hai
+            cd /home/ubuntu || exit 1
+
+            echo "🚀 Cloning repository from $REPO_URL..."
+            git clone "$REPO_URL"
+
+            # Project ke andar automatic navigate karne ke liye
+            if [ -d "$TARGET_DIR/app/fashion-d2c-app/" ]; then
+              cd "$TARGET_DIR/app/fashion-d2c-app/" || exit 1
+              echo "📂 Switched to working directory: $(pwd)"
+            else
+              echo "❌ Error: Expected internal directory layout not found!"
+              exit 1
+            fi
+            
+            cat << 'EOF' | sudo tee $TARGET_DIR/app/fashion-d2c-app/.env
             ${{ env.MYSQL_DOTENV }}
             EOF
             
