@@ -1,0 +1,74 @@
+name : Backend CI/CD
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'app/fashion-d2c-app/backend/**'
+
+# Environment variables (Global, accessible to all jobs)
+env:
+  GHCR_REGISTRY: ghcr.io/${{ github.repository }}
+  BACKEND_IMAGE: fastapi-backend
+
+jobs:
+  # ================
+  # JOB 1: BACKEND
+  # ================
+  
+  build-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Build Backend Docker Image
+        run: |
+          cd app/fashion-d2c-app/backend
+          docker build -t $GHCR_REGISTRY/${{ env.BACKEND_IMAGE }}:latest .
+          docker tag $GHCR_REGISTRY/${{ env.BACKEND_IMAGE }}:latest $GHCR_REGISTRY/${{ env.BACKEND_IMAGE }}:${{ github.sha }}
+        
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Push Backend Image
+        run: |
+          docker push $GHCR_REGISTRY/${{ env.BACKEND_IMAGE }}:latest
+          docker push $GHCR_REGISTRY/${{ env.BACKEND_IMAGE }}:${{ github.sha }}
+    
+  # =========================================================
+  # JOB 2: DEPLOY (Runs when both parallel jobs are success)
+  # =========================================================
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [build-backend] # <--- IMP: waits until both job are executed
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' # Only runs on main branch
+
+    steps:
+      - name: Deploy to Remote EC2 Server
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.EC2_HOSTS }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            echo "🚀 Starting Deployment on EC2..."
+            cd /home/ubuntu/DeploySheild/app/fashion-d2c-app/
+
+            # pull both latest images
+            docker pull $GHCR_REGISTRY/${{ env.BACKEND_IMAGE }}:latest
+
+            # Stop old containers and start new ones
+            docker compose -f docker-compose.yaml down || true
+            docker compose -f docker-compose.yaml up -d --force-recreate
+
+            echo "✅ Backend Deployment Completed Successfully!"
+
+
+
+    

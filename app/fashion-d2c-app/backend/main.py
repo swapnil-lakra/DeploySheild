@@ -4,6 +4,8 @@ from routers import products   # because routers folder is in same directory as 
 from database import engine, Base
 import asyncio
 
+from datetime import datetime
+
 async def init_db():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
@@ -27,3 +29,10 @@ async def startup():
 @app.get("/")
 async def root():
     return {"message": "Welcome to D2C Fashion API"}
+
+@app.get("/health")
+def health_check():
+    return {
+        "status" : "healthy",
+        "timestamp" : datetime.now().isoformat()
+    }

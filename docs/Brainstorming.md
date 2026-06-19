@@ -143,4 +143,29 @@ Date - 15/06/2026
 
 68. mai d2c fashion application ke docker image se container run kiya aur wo successfully run ho gaya ✅
 
-69. 
+69. ab container toh run ho rahe hai but mai unko access nahi kar paa raha tha because mai aws cloud me vpc me security-group me inbound rule me unke ports (3000 and 8000) ko access from anywhere rule add nahi kiya tha
+
+70. maine rule add kar liya hai, ab acces karne ka try karta hun.
+
+71. mai successfully d2c fashion application ke frontend aur backend ko access kar paa raha hun
+
+72. maine socha tha ec2 par d2c fashion application ke containers(frontend+backend+database) run nahi ho paayegne aur run hua toh fir wo OoM(Out of Memeory) ho jaayega but aisa nahi hua to fir mai aage continue kar sakta hun
+
+73. ab samay aa gaya hai most awaited GitHub Actions ka, jisse mai CI/CD pipeline banaounga
+
+74. Usse phele mujhe thoda GitHub Actions ke baare me padhna padega 
+
+Date - 17/06/2026
+
+75. Mai GitHub Actions ke baare me samajh gaya hun ab mai isse CI/CD pipeline create karunga
+
+76. Ab mujhe ye samajhna padega ki jab mai GitHub Actions ka use karke CI/CD pipeline create karunga toh jab wo build hoga toh konse se machine use hoga build hone me, suppose application ka build karna hai docker image toh fir konsa machine use hoga mera remote server jisme application deploy hone wala hai ya fir github ka khud ka machine ?
+
+77. Mujhe samajh aa gaya jab application ko build karne ka time aata hai toh GitHub Action apne GitHub-Hosted Runner me build karta hai aur mai isko Research.md me point no. 14 me document kiya hu
+
+78. mai GitHub Actions ke CI/CD workflow ke liye folders aur files bana liya hai aur mai usko implementation.md me point no. 6 me document kiya hai
+
+79. Mai GitHub Actions se poora CI/CD Workflow bana liya hai ".github/workflows/d2c-fashion-cd-cd.yaml" me
+
+
+

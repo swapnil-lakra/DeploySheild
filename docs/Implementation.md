@@ -58,5 +58,17 @@ docker push ghcr.io/swapnil-lakra/deploysheild/nextjs-frontend:latest
 docker push ghcr.io/swapnil-lakra/deploysheild/fastapi-backend:latest
 ```
 
-Date - 16/06/2026
+Date - 17/06/2026
+
+### 6. GitHub Actions se CI/CD Pipleline ke liye folders aur workflow file create kiya gaya hai
+
+CI/CD Pipeline create karne ke liye mujhe workflow create karna padega jo ek YAML file hoti hai
+
+```bash
+# Creating folder for GitHub Actions Workflow folder
+mkdir -p .github/workflows
+
+# Creating workflow for d2c-fashion-application's frontend + backend ci/cd pipeline
+touch .github/workflows/d2c-fashion-ci-cd.yaml
+```
 
