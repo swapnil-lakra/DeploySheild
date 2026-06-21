@@ -7,17 +7,17 @@ services:
     container_name: d2c-mariadb-green
     restart: unless-stopped
     environment:
-      MARIADB_BLUE_ROOT_PASSWORD: ${MARIADB_GREEN_ROOT_PASSWORD}
-      MARIADB_BLUE_DATABASE: ${MARIADB_GREEN_DATABASE:-d2c_fashion}
-      MARIADB_BLUE_USER: ${MARIADB_GREEN_USER}
-      MARIADB_BLUE_PASSWORD: ${MARIADB_GREEN_PASSWORD}
-      MARIADB_BLUE_CHARSET: utf8mb4
-      MARIADB_BLUE_COLLATION: utf8mb4_unicode_ci
+      MARIADB_ROOT_PASSWORD: ${MARIADB_GREEN_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${MARIADB_GREEN_DATABASE:-d2c_fashion}
+      MARIADB_USER: ${MARIADB_GREEN_USER}
+      MARIADB_PASSWORD: ${MARIADB_GREEN_PASSWORD}
+      MARIADB_CHARSET: utf8mb4
+      MARIADB_COLLATION: utf8mb4_unicode_ci
     ports:
       - "${MARIADB_GREEN_PORT:-3307}:3306"  
     volumes:
       - green-mariadb_data:/var/lib/mysql
-      - ./mariadb-init:/docker-entrypoint-initdb.d
+      - ../mariadb-init:/docker-entrypoint-initdb.d
     healthcheck:
       #test: ["CMD","mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
       test: ["CMD", "mariadb-admin", "ping", "-h", "127.0.0.1", "--silent"]
@@ -39,7 +39,7 @@ services:
     container_name: d2c-backend-green 
     restart: unless-stopped
     environment:
-      DATABASE_URL: mysql+aiomysql://${MARIADB_GREEN_USER}:${MARIADB_GREEN_PASSWORD}@mysql:3306/d2c_fashion?charset=utf8mb4
+      DATABASE_URL: mysql+aiomysql://${MARIADB_GREEN_USER}:${MARIADB_GREEN_PASSWORD}@mariadb-green:3306/d2c_fashion?charset=utf8mb4
     ports:
       - "8001:8000"
     depends_on:
@@ -54,7 +54,7 @@ services:
     container_name: d2c-frontend-green
     restart: unless-stopped
     environment:
-      NEXT_PUBLIC_API_URL: http://backend:8000
+      NEXT_PUBLIC_API_URL: http://backend-green:8000
     ports:
       - "3001:3000"
     depends_on:
