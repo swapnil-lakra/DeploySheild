@@ -11,7 +11,7 @@ async def init_db():
         await conn.run_sync(Base.metadata.create_all)
 
 app = FastAPI(title="D2C Fashion API")
-#"http://localhost:3000" 
+ 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000"],
