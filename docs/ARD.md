@@ -141,5 +141,34 @@ By choosing GHCR, the project accepts the following trade-offs:
 
 This decision simplifies container image management by consolidating source control, CI/CD pipelines, and container artifacts within a single platform. It reduces operational overhead, eliminates additional registry administration requirements, and minimizes infrastructure costs for public container images. The accepted trade-offs are considered acceptable because the project prioritizes simplicity, developer productivity, cost efficiency, and seamless integration with the existing GitHub-based development workflow.
 
-Date - 16/06/2026
+Date - 20/06/2026
+
+# 6. Load Balancer Decision Making
+
+### Nginx | HAProxy | Trafik | Caddy | Envoy
+
+### Decision
+
+Nginx was selected as the reverse proxy and traffic routing solution for this project.
+
+### Rationale
+
+The application is deployed on a resource-constrained EC2 instance with only 1 GB of memory, where multiple services including Next.js, FastAPI, MySQL, and supporting infrastructure components run simultaneously. Under these constraints, minimizing memory and CPU consumption is a critical architectural requirement.
+
+Nginx was selected because it provides a lightweight, high-performance reverse proxy capable of efficiently routing traffic between frontend and backend services while maintaining a minimal resource footprint. It also offers mature support for HTTP proxying, load balancing, SSL termination, health checks, and blue-green deployment traffic switching without introducing significant operational overhead.
+
+### Trade-offs Accepted
+
+By choosing Nginx, the project accepts the following trade-offs:
+
+* Less dynamic service discovery and automatic configuration compared to Traefik.
+* Fewer advanced Layer 7 traffic management capabilities than Envoy.
+* Reduced observability and service mesh integration features compared to Envoy-based architectures.
+* Less specialized load-balancing functionality than HAProxy for highly complex traffic-routing scenarios.
+* More manual configuration management compared to modern auto-discovery reverse proxies.
+
+### Consequences
+
+This decision minimizes infrastructure resource consumption while providing reliable reverse proxy and traffic routing capabilities. The lightweight footprint helps preserve memory and CPU resources for core application services, reducing the risk of resource exhaustion on the 1 GB EC2 instance. Although advanced traffic management and service discovery capabilities are sacrificed, the selected solution adequately satisfies the project's current scalability, deployment, and operational requirements while maintaining architectural simplicity.
+
 
