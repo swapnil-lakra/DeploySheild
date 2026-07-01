@@ -1,0 +1,104 @@
+version: "3.8"
+
+services:
+  #MySQL Database
+  mariadb-green:
+    env_file: .env
+    image: mariadb:11.4
+    container_name: d2c-mariadb-green
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_DATABASE: d2c_fashion_green
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_USER_PASSWORD}
+      MARIADB_CHARSET: utf8mb4
+      MARIADB_COLLATION: utf8mb4_unicode_ci
+    ports:
+      - "3308:3306"  
+    volumes:
+      - green-mariadb_data:/var/lib/mysql
+      - ./mariadb-init:/docker-entrypoint-initdb.d
+    healthcheck:
+      #test: ["CMD","mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      test: ["CMD", "mariadb-admin", "ping", "-h", "127.0.0.1", "--silent"]
+      interval: 10s
+      timeout: 10s 
+      retries: 10
+      start_period: 120s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - green-network
+    command:
+      - --max_connections=1000
+      - --wait_timeout=600
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+  
+  # FastAPI Backend
+  backend-green:
+    env_file: .env
+    image: ghcr.io/swapnil-lakra/deploy-sheild/fastapi-backend:green-latest
+    container_name: d2c-backend-green 
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: mysql+aiomysql://${MARIADB_USER}:${MARIADB_USER_PASSWORD}@mariadb-green:3306/d2c_fashion_green?charset=utf8mb4
+      ENVIRONMENT: green
+    ports:
+      - "8001:8000"
+    healthcheck:
+      test: [ "CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')" ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    depends_on:
+      mariadb-green:
+        condition: service_healthy
+    networks:
+      - green-network
+  
+  #Next.js Frontend
+  frontend-green:
+    image: ghcr.io/swapnil-lakra/deploy-sheild/reactjs-frontend:green-latest
+    container_name: d2c-frontend-green
+    restart: unless-stopped
+    environment:
+      BACKEND_HOST: backend-green
+      BACKEND_PORT: 8000
+      ENVIRONMENT: green
+    ports:
+      - "3001:80"
+    healthcheck:
+      test: ["CMD","wget","--spider","http://localhost/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    depends_on:
+      backend-green:
+        condition: service_healthy
+    networks:
+      - green-network
+
+volumes:
+  green-mariadb_data:
+
+networks:
+  green-network:  
+    driver: bridge
+  
+   
