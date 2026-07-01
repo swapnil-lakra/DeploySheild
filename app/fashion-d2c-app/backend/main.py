@@ -1,11 +1,15 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import products   # because routers folder is in same directory as main.py
+from routers import products   
 from database import engine, Base
 import asyncio
-
 from datetime import datetime
+from dotenv import load_dotenv
 
+load_dotenv()
+ENVIRONMENT = os.getenv("ENVIRONMENT")
+                        
 async def init_db():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
@@ -33,6 +37,8 @@ async def root():
 @app.get("/health")
 def health_check():
     return {
-        "status" : "healthy",
-        "timestamp" : datetime.now().isoformat() 
+        "status": "healthy",
+        "service": "backend",
+        "environment": ENVIRONMENT,
+        "timestamp": datetime.now().isoformat() 
     }
